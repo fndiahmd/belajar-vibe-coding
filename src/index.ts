@@ -1,21 +1,11 @@
 import { Elysia } from "elysia";
-import { db } from "./db";
-import { users } from "./db/schema";
+import { authRoute } from "./routes/auth-route";
+import { usersRoute } from "./routes/users-route";
 
 const app = new Elysia()
   .get("/", () => ({ message: "Hello World from Elysia!" }))
-  .get("/users", async () => {
-    try {
-      const allUsers = await db.select().from(users);
-      return { success: true, data: allUsers };
-    } catch (error: any) {
-      return {
-        success: false,
-        message: "Database connection failed or table does not exist.",
-        error: error.message,
-      };
-    }
-  })
+  .use(usersRoute)
+  .use(authRoute)
   .listen(3000);
 
 console.log(
